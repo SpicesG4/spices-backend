@@ -17,11 +17,13 @@ app.use(express.urlencoded({ extended: true }));
 
 //Routes
 const v1Routes = require('./routes/v1.js');
+const v2Routes = require('./routes/v2.js');
 
 
 //Example
 app.use('/', v1Routes);
 
+app.use('/', v2Routes);
 
 
 

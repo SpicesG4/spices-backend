@@ -6,9 +6,23 @@ require('dotenv').config();
 const jwt = require("jsonwebtoken");
 const base64 = require('base-64');
 
+
+const recipes= new mongoose.Schema({
+
+  description: {type : String, default: 'test1'},
+  date:  {type : String, default: 'test1'},
+
+})
+
+
 const users = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  role: { type: String, required: true, default: 'user', enum: ['user', 'chef'] },
+
+  recipesArray: [recipes]
+
+
 });
 
 // Adds a virtual field to the schema. We can see it, but it never persists
@@ -17,7 +31,7 @@ users.virtual('token').get(function () {
   let tokenObject = {
     username: this.username,
   }
-  return jwt.sign(tokenObject,base64.encode(process.env.SECRET),{ expiresIn: '15min' })
+  return jwt.sign(tokenObject,base64.encode(process.env.SECRET))
 });
 
 users.pre('save', async function () {

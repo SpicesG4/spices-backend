@@ -15,8 +15,8 @@ authRouter.put('/updatefood/:id', bearerAuth, acl, handleUpdateData);
 authRouter.delete('/deletefood/:id', bearerAuth, acl, handleDeleteData);
 // End of chef routes 
 
-//start of Public
-authRouter.get('/getallfood/', bearerAuth, handlegetAll);
+
+
 
 
 
@@ -39,7 +39,7 @@ async function handleGetData(req, res, next) {
     //  const { email, name, imageUrl, movie, news, books, art, cats, food } = req.body;
     res.send(req.user.recipesArray)
 
-    
+
 }
 
 
@@ -47,59 +47,54 @@ async function handleGetData(req, res, next) {
 async function handleUpdateData(req, res, next) {
 
 
-req.user.recipesArray.map((element)=>{
-    if(element._id == req.params.id)
-    {
-element.description=req.body.description
-element.date=req.body.date
+    req.user.recipesArray.map((element) => {
+        if (element._id == req.params.id) {
+            element.description = req.body.description
+            element.date = req.body.date
 
 
-        return element
-    }
-})
+            return element
+        }
+    })
 
 
-await req.user.save()
+    await req.user.save()
     //   await  req.user.recipesArray.findByIdAndUpdate({_id:req.params.id},{ description: description, date: date })
 
     res.send(req.user)
 }
 
-async function  handleDeleteData(req, res) {
+async function handleDeleteData(req, res) {
 
-    let results=[]
-    const data =  req.user.recipesArray.map((element)=>{
-        if(element._id == req.params.id)
-        {
-         console.log("no need")
+    let results = []
+    const data = req.user.recipesArray.map((element) => {
+        if (element._id == req.params.id) {
+            console.log("no need")
         }
 
 
-        else
-        {
+        else {
             console.log("hello from else ")
             results.push(element)
             return element
 
         }
-    
+
     })
 
 
-    req.user.recipesArray=results
-console.log(results)
-await req.user.save()
+    req.user.recipesArray = results
+    console.log(results)
+    await req.user.save()
 
-res.send(req.user)
+    res.send(req.user)
 
 }
 
 
 //////// End of Chef's stuff
 //
-async function  handlegetAll(req, res) {
 
-}
 
 
 module.exports = authRouter;

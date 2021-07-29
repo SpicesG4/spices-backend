@@ -7,10 +7,10 @@ const jwt = require("jsonwebtoken");
 const base64 = require('base-64');
 
 
-const recipes= new mongoose.Schema({
+const recipes = new mongoose.Schema({
 
-  description: {type : String, default: 'test1'},
-  date:  {type : String, default: 'test1'},
+  description: { type: String, default: 'test1' },
+  date: { type: String, default: 'test1' },
 
 })
 
@@ -31,7 +31,7 @@ users.virtual('token').get(function () {
   let tokenObject = {
     username: this.username,
   }
-  return jwt.sign(tokenObject,base64.encode(process.env.SECRET))
+  return jwt.sign(tokenObject, base64.encode(process.env.SECRET))
 });
 
 users.pre('save', async function () {

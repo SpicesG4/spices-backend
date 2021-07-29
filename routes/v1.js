@@ -1,23 +1,43 @@
+'use strict';
+
 const express = require('express');
-const router = express.Router();
+const authRouter = express.Router();
 
-const Users = require('../DB/model/user.schema');
-const bcrypt = require('bcrypt');
-
+const User = require('../DB/model/user.schema');
 const basicAuth = require('../middleware/basic-auth')
+const bearerAuth = require('../middleware/bearer')
 
-router.post('/signup', async (req, res) => {
+authRouter.post('/signup', async (req, res, next) => {
   try {
-    // console.log(req.body.password)
-    req.body.password = await bcrypt.hash(req.body.password, 10);
-    const user = new Users(req.body);
-    const record = await user.save(req.body);
-    res.status(201).json(record);
-  } catch (e) { res.status(403).json(e.message); }
+    let user = new User(req.body);
+    const userRecord = await user.save();
+    const output = {
+      user: userRecord,
+      token: userRecord.token
+    };
+    res.status(201).json(output);
+  } catch (e) {
+    next(e.message)
+  }
 });
 
-router.post('/signin', basicAuth, (req, res) => {
-  res.status(200).json(req.body.user);
+authRouter.post('/signin', basicAuth, (req, res, next) => {
+  const user = {
+    user: req.user,
+    token: req.user.token
+  };
+  res.status(200).json(user);
 });
 
-module.exports = router;
+authRouter.get('/users', bearerAuth, async (req, res, next) => {
+  const users = await User.find({});
+  const list = users.map(user => user.username);
+  res.status(200).json(list);
+});
+
+authRouter.get('/secret', bearerAuth, async (req, res, next) => {
+  res.status(200).send("Welcome to the secret area!")
+});
+
+
+module.exports = authRouter;

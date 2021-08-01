@@ -4,22 +4,13 @@ const express = require('express');
 const authRouter = express.Router();
 
 const User = require('../DB/model/user.schema');
-const basicAuth = require('../middleware/basic-auth')
-const bearerAuth = require('../middleware/bearer')
+const basicAuth = require('../middleware/basic-auth');
+const bearerAuth = require('../middleware/bearer');
 
-authRouter.post('/signup', async (req, res, next) => {
-  try {
-    let user = new User(req.body);
-    const userRecord = await user.save();
-    const output = {
-      user: userRecord,
-      token: userRecord.token
-    };
-    res.status(201).json(output);
-  } catch (e) {
-    next(e.message)
-  }
-});
+const UserController = require('../controllers/user_controller.js');
+
+
+authRouter.post('/signup', UserController.signup);
 
 authRouter.post('/signin', basicAuth, (req, res, next) => {
   const user = {

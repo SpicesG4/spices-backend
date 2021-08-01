@@ -16,6 +16,7 @@ const recipes = new mongoose.Schema({
 
 
 const users = new mongoose.Schema({
+
   email: String,
   verified: {
     type: Boolean,
@@ -50,11 +51,14 @@ users.pre('save', async function () {
 });
 
 users.methods.generateVerificationToken = function () {
-  const user = this;    const verificationToken = jwt.sign(
+  const user = this;    
+  console.log('thisuser id',user._id);
+  const verificationToken = jwt.sign(
       { ID: user._id },
       process.env.USER_VERIFICATION_TOKEN_SECRET,
       { expiresIn: "7d" }
-  );    return verificationToken;
+  );  
+    return verificationToken;
 };
 
 // BASIC AUTH

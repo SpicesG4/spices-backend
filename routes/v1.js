@@ -12,13 +12,8 @@ const UserController = require('../controllers/user_controller.js');
 
 authRouter.post('/signup', UserController.signup);
 
-authRouter.post('/signin', basicAuth, (req, res, next) => {
-  const user = {
-    user: req.user,
-    token: req.user.token
-  };
-  res.status(200).json(user);
-});
+authRouter.post('/signin', basicAuth, UserController.login);
+authRouter.get('/api/verify/:token', UserController.verify);
 
 authRouter.get('/users', bearerAuth, async (req, res, next) => {
   const users = await User.find({});

@@ -1,27 +1,27 @@
-const express = require('express');
-const app = express();
-const http = require('http');
-const PORT = process.env.PORT || 5000;
-const cors = require('cors');
-const server = http.createServer(app);
-const io = require('socket.io')(http);
+// const express = require('express');
+// const app = express();
+// const http = require('http');
+// const PORT = process.env.PORT || 5000;
+// const cors = require('cors');
+// const server = http.createServer(app);
+// const io = require('socket.io')(http);
 
-io.listen(server);
+// io.listen(server);
 
-app.use(cors());
-io.on('connection', (socket) => {
- console.log('con')
- socket.on('join', (payload) => {
-  console.log('work',payload)
-  socket.emit('test', { name:"test"});
-});
-// socket.on('disconnect', () => {
-//   socket.to(staffRoom).emit('offlineStaff', { id: socket.id });
+// app.use(cors());
+// io.on('connection', (socket) => {
+//  console.log('con')
+//  socket.on('join', (payload) => {
+//   console.log('work',payload)
+//   socket.emit('test', { name:"test"});
 // });
-});
-server.listen(PORT, () => {
-  console.log(`Listening on PORT ${PORT}`);
-});
+// // socket.on('disconnect', () => {
+// //   socket.to(staffRoom).emit('offlineStaff', { id: socket.id });
+// // });
+// });
+// server.listen(PORT, () => {
+//   console.log(`Listening on PORT ${PORT}`);
+// });
 
 
 

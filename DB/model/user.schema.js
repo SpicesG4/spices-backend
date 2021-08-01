@@ -16,14 +16,23 @@ const recipes = new mongoose.Schema({
 
 
 const users = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  role: { type: String, required: true, default: 'user', enum: ['user', 'chef'] },
+
+  email: String,
+  verified: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
+  username: { type: String,  unique: true },
+  password: { type: String},
+  role: { type: String,  enum: ['user', 'chef'] },
 
   recipesArray: [recipes]
 
 
 });
+
+
 
 // Adds a virtual field to the schema. We can see it, but it never persists
 // So, on every user object ... this.token is now readable!
@@ -34,11 +43,23 @@ users.virtual('token').get(function () {
   return jwt.sign(tokenObject, base64.encode(process.env.SECRET))
 });
 
+
 users.pre('save', async function () {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 10);
   }
 });
+
+users.methods.generateVerificationToken = function () {
+  const user = this;    
+  console.log('thisuser id',user._id);
+  const verificationToken = jwt.sign(
+      { ID: user._id },
+      process.env.USER_VERIFICATION_TOKEN_SECRET,
+      { expiresIn: "7d" }
+  );  
+    return verificationToken;
+};
 
 // BASIC AUTH
 users.statics.authenticateBasic = async function (username, password) {

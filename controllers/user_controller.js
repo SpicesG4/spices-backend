@@ -28,6 +28,16 @@ exports.signup = async (req, res) => {
     const username = await new User(req.body);  // Step 2 - Generate a verification token with the user's ID
     console.log(username);
     username.save()
+
+
+
+    const output = {
+      user: username,
+      token: username.token
+    };
+
+
+    console.log(username.token, "username test");
     const verificationToken = username.generateVerificationToken();       // Step 3 - Email the user a unique verification link
     console.log(username.token,verificationToken,'tocken');
     const url = `http://localhost:3001/api/verify/${verificationToken}`
@@ -36,9 +46,8 @@ exports.signup = async (req, res) => {
       subject: 'Verify Account',
       html: `Click <a href = '${url}'>here</a> to confirm your email.`
     });
-    return res.status(201).send({
-      message: `Sent a verification email to ${email}`
-    });
+    return res.status(201).send(
+output);
   } catch (err) {
     return res.status(500).send(err);
   }

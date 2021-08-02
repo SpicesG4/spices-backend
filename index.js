@@ -5,27 +5,20 @@ const cors = require('cors');
 const morgan = require('morgan');
 const port = process.env.PORT
 const app = express()
-//Socket stuff
+app.use(cors());
+
 const socketIo = require('socket.io');
 const http = require('http');
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-      origin: '*',
+        origin: '*',
     },
-  });
+});
 
-
-
-app.use(cors());
 app.use(morgan('dev'));
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
-
-
-
-
 //Routes
 const v1Routes = require('./routes/v1.js');
 const v2Routes = require('./routes/v2.js');
@@ -44,53 +37,52 @@ app.use('/', conversations);
 
 
 
-
-//Starting in socket
-
 let users = [];
 
 const addUser = (userId, socketId) => {
-  !users.some((user) => user.userId === userId) &&
-    users.push({ userId, socketId });
+    !users.some((user) => user.userId === userId) &&
+        users.push({ userId, socketId });
+};
+const removeUser = (socketId) => {
+    users = users.filter((user) => user.socketId !== socketId);
 };
 
 
+const getUser = (userId) => {
+    return users.find((user) => user.userId === userId);
+};
 
 
 io.on('connection', (socket) => {
-    console.log('con')
-    socket.on('join', (payload) => {
 
 
-        console.log(socket.id,"soccket")
-        console.log(payload.id,"iddddd")
- 
-     addUser(payload.id, socket.id);
+    console.log('client connected', socket.id);
+    socket.onAny((event, ...args) => {
+        console.log(event, args);
+    });
 
-     console.log('work',payload)
-   });
-   socket.emit('test', { name:"sdadfafdfeadfc"});
-
-   // socket.on('disconnect', () => {
-   //   socket.to(staffRoom).emit('offlineStaff', { id: socket.id });
-   // });
-
+    socket.on('adduser', (payload) => {
+        console.log(payload, "soccccckkkeeeetttt");
+        addUser(payload._id, socket.id);
+        console.log(users);
+        io.emit("getUsers", users);
+    })
 
 
-//    io.on("addUser", (userId) => {
-
-//     // io.emit("getUsers", users);
-//   });
-
-
-   });
+    socket.on('sendmassege', (payload) => {
+        console.log(payload, "mmmmm");
+    })
 
 
+    socket.on('disconnect', () => {
+        console.log(socket.id, 'disconnected');
+        socket.emit('offlineUser', { id: socket.id });
+        removeUser(socket.id);
 
-server.listen(port || 3001, () => {
-    console.log('listening on *: '+port);
-  });
+    });
+})
 
-// server.listen( () => {
-//     console.log('socket is on port ' + 3007);
-// })
+
+server.listen(port, () => {
+    console.log('server is on port ' + port);
+})

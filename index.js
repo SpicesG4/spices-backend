@@ -73,20 +73,19 @@ io.on('connection', (socket) => {
 
         console.log(users, "useeeers only");
 
-let data=0;
-        users.map((user)=>{
-            if(user.userId== payload.receiverId)
-            {
-                data=user.socketId
+        let data = 0;
+        users.map((user) => {
+            if (user.userId == payload.receiverId) {
+                data = user.socketId
             }
 
-            return 
+            return
         })
-console.log("daaata",data)
+        console.log("daaata", data)
         // socket.emit("getMessage", {"text" :payload.text});
 
-        socket.to(data).emit("getMessage", {"text" :payload.text , "senderId":payload.senderId});
- 
+        socket.to(data).emit("getMessage", { "text": payload.text, "senderId": payload.senderId });
+
 
     })
 

@@ -9,6 +9,10 @@ router.post("/conversations", async (req, res) => {
   });
 
   try {
+    const conversation = await Conversation.find({
+      members: { $in: [req.body.userId] },
+    });
+    console.log(conversation)
     const savedConversation = await newConversation.save();
     res.status(200).json(savedConversation);
   } catch (err) {

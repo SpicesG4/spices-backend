@@ -1,10 +1,13 @@
 const express = require('express');
 const authRouter = express.Router();
+const mongoose = require('mongoose');
+
 
 const User = require('../DB/model/user.schema');
 const basicAuth = require('../middleware/basic-auth')
 const bearerAuth = require('../middleware/bearer')
 const acl = require('../middleware/acl')
+const aclAdmin=require('../middleware/acladmin')
 
 //Start of chef routes
 authRouter.post('/addfood', bearerAuth, acl, handleCreate);
@@ -13,10 +16,13 @@ authRouter.get('/getfood', bearerAuth, acl, handleGetData);
 authRouter.put('/updatefood/:id', bearerAuth, acl, handleUpdateData);
 
 authRouter.delete('/deletefood/:id', bearerAuth, acl, handleDeleteData);
+
 // End of chef routes 
 
 
-
+//start of Admin routes
+authRouter.delete('/deleteUser/:username', bearerAuth, aclAdmin, handleDeleteUser)
+// end of Admin routes
 
 
 
@@ -72,7 +78,6 @@ async function handleDeleteData(req, res) {
             console.log("no need")
         }
 
-
         else {
             console.log("hello from else ")
             results.push(element)
@@ -95,6 +100,46 @@ async function handleDeleteData(req, res) {
 //////// End of Chef's stuff
 //
 
+///start admin role
+
+ async function handleDeleteUser(req, res) {
+ 
+//     const id = Number(req.params.id);
+
+    const { username } = req.params;
+    User.findOneAndDelete({username: username}, 
+    (err, result) => {
+    if (err) return res.send(500, err)
+    console.log('got deleted');
+    // res.redirect('/');
+    });
+
+ }
+
+    // let usersArr = []
+    
+    // const data = User.map((element) => {
+    //     if (element._id == req.params.id) {
+    //         console.log("no need")
+    //     }
+    //     else {
+    //         console.log("hello from else ")
+    //         usersArr.push(element)
+    //         return element
+    //     }
+
+    // })
+
+
+    // // req.user = users
+    // console.log(usersArr)
+    // // await user.save()
+
+    // res.send(usersArr)
+
+
+
+/// End admin role
 
 
 module.exports = authRouter;

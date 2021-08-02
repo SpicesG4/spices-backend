@@ -3,10 +3,7 @@ require('./DB/mangoose')
 require('dotenv').config()
 const cors = require('cors');
 const morgan = require('morgan');
-
-
 const port = process.env.PORT
-
 const app = express()
 app.use(cors());
 
@@ -58,7 +55,6 @@ const getUser = (userId) => {
 
 io.on('connection', (socket) => {
 
-
     console.log('client connected', socket.id);
     socket.onAny((event, ...args) => {
         console.log(event, args);
@@ -74,6 +70,24 @@ io.on('connection', (socket) => {
 
     socket.on('sendmassege', (payload) => {
         console.log(payload, "mmmmm");
+
+        console.log(users, "useeeers only");
+
+let data=0;
+        users.map((user)=>{
+            if(user.userId== payload.receiverId)
+            {
+                data=user.socketId
+            }
+
+            return 
+        })
+console.log("daaata",data)
+        // socket.emit("getMessage", {"text" :payload.text});
+
+        socket.to(data).emit("getMessage", {"text" :payload.text , "senderId":payload.senderId});
+ 
+
     })
 
 

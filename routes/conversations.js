@@ -2,7 +2,7 @@ const router = require("express").Router();
 const Conversation = require("../DB/model/Conversation");
 
 //new conv
-
+//Establish a conversation 
 router.post("/conversations", async (req, res) => {
   const newConversation = new Conversation({
     members: [req.body.senderId, req.body.receiverId],

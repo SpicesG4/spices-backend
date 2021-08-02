@@ -14,7 +14,7 @@ const nodemailer = require('nodemailer'); const transporter = nodemailer.createT
 
 exports.signup = async (req, res) => {
   const { email } = req.body    // Check we have an email
- 
+
   if (!email) {
     return res.status(422).send({ message: "Missing email." });
   } try {
@@ -39,7 +39,7 @@ exports.signup = async (req, res) => {
 
     console.log(username.token, "username test");
     const verificationToken = username.generateVerificationToken();       // Step 3 - Email the user a unique verification link
-    console.log(username.token,verificationToken,'tocken');
+    console.log(username.token, verificationToken, 'tocken');
     const url = `http://localhost:3001/api/verify/${verificationToken}`
     transporter.sendMail({
       to: email,
@@ -47,7 +47,7 @@ exports.signup = async (req, res) => {
       html: `Click <a href = '${url}'>here</a> to confirm your email.`
     });
     return res.status(201).send(
-output);
+      output);
   } catch (err) {
     return res.status(500).send(err);
   }
@@ -73,9 +73,7 @@ exports.login = async (req, res) => {
       return res.status(403).send({
         message: "Verify your Account."
       });
-    } return res.status(200).send({
-      message: "User logged in"
-    });
+    } return res.status(200).send(user);
   } catch (err) {
     return res.status(500).send(err);
   }
@@ -85,8 +83,8 @@ exports.login = async (req, res) => {
 
 exports.verify = async (req, res) => {
   const { token } = req.params    // Check we have an id
-console.log('t',token);
-console.log(process.env.USER_VERIFICATION_TOKEN_SECRET);
+  console.log('t', token);
+  console.log(process.env.USER_VERIFICATION_TOKEN_SECRET);
   if (!token) {
     return res.status(422).send({
       message: "Missing Token"

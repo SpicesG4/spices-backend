@@ -73,9 +73,9 @@ exports.login = async (req, res) => {
       return res.status(403).send({
         message: "Verify your Account."
       });
-    } return res.status(200).send({
-      message: "User logged in"
-    });
+    } return res.status(200).send(
+      user
+    );
   } catch (err) {
     return res.status(500).send(err);
   }

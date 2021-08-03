@@ -19,6 +19,7 @@ router.post("/conversations", async (req, res) => {
 //get conv of a user
 
 router.get("/conversations/:userId", async (req, res) => {
+  //Return all conversation for this user
   try {
     const conversation = await Conversation.find({
       members: { $in: [req.params.userId] },
@@ -30,7 +31,7 @@ router.get("/conversations/:userId", async (req, res) => {
 });
 
 // get conv includes two userId
-
+//Specific conversation 
 router.get("/find/:firstUserId/:secondUserId", async (req, res) => {
   try {
     const conversation = await Conversation.findOne({

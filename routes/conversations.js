@@ -2,13 +2,17 @@ const router = require("express").Router();
 const Conversation = require("../DB/model/Conversation");
 
 //new conv
-
+//Establish a conversation 
 router.post("/conversations", async (req, res) => {
   const newConversation = new Conversation({
     members: [req.body.senderId, req.body.receiverId],
   });
 
   try {
+    const conversation = await Conversation.find({
+      members: { $in: [req.body.userId] },
+    });
+    console.log(conversation)
     const savedConversation = await newConversation.save();
     res.status(200).json(savedConversation);
   } catch (err) {

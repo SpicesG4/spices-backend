@@ -25,7 +25,7 @@ const users = new mongoose.Schema({
   },
   username: { type: String,  unique: true },
   password: { type: String},
-  role: { type: String,  enum: ['user', 'chef'] },
+  role: { type: String,  enum: ['user', 'chef','admin'] },
 
   recipesArray: [recipes]
 

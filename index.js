@@ -25,7 +25,7 @@ const v2Routes = require('./routes/v2.js');
 const public = require('./routes/public.js');
 const messages = require('./routes/messages')
 const conversations = require('./routes/conversations');
-const admin=require('./routes/admin-route')
+const admin=require('./routes/admin-route');
 
 //Example
 app.use('/', v1Routes);
@@ -35,7 +35,8 @@ app.use('/', public)
 
 app.use('/', messages);
 app.use('/', conversations);
-app.use('/',admin)
+app.use('/',admin);
+
 
 
 let users = [];

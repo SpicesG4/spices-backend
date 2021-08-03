@@ -38,6 +38,9 @@ app.use('/', conversations);
 
 
 let users = [];
+const queue = [];
+
+
 
 const addUser = (userId, socketId) => {
     !users.some((user) => user.userId === userId) &&
@@ -56,9 +59,9 @@ const getUser = (userId) => {
 io.on('connection', (socket) => {
 
     console.log('client connected', socket.id);
-    socket.onAny((event, ...args) => {
-        console.log(event, args);
-    });
+    // socket.onAny((event, ...args) => {
+    //     console.log(event, args);
+    // });
 
     socket.on('adduser', (payload) => {
         console.log(payload, "soccccckkkeeeetttt");
@@ -81,21 +84,62 @@ io.on('connection', (socket) => {
 
             return
         })
+        let rdata = 0
+
+        users.map((user) => {
+            if (user.userId == payload.senderId) {
+                rdata = user.socketId
+            }
+
+            return
+        })
+
         console.log("daaata", data)
         // socket.emit("getMessage", {"text" :payload.text});
+        async () => {
 
-        socket.to(data).emit("getMessage", { "text": payload.text, "senderId": payload.senderId });
+            const sendemmm = {
+                conversationId: payload.conversationId,
+                sender: payload.senderId,
+                text: payload.text
+
+            }
+
+
+            const savedmessage = await axios.post('http://localhost:3001/messages', sendemmm)
+
+
+
+            console.log("saved Msg", savedmessage.data)
+            socket.to(data).emit("getoneMessage", {
+                "text": payload.text, "senderId": payload.senderId
+
+
+            });
+            socket.to(rdata).emit("getoneMessagerecev", {
+                "text": payload.text, "senderId": payload.receiverId
+
+            });
+            console.log("hihiuhihoh", payload.receiverId, payload.text)
+        }
+
+        queue.push({ "text": payload.text, "senderId": payload.senderId });
+        console.log([...queue]);
+        socket.emit("getallmessages", [...queue]
+
+
+
+        )
 
 
     })
-
-
     socket.on('disconnect', () => {
         console.log(socket.id, 'disconnected');
         socket.emit('offlineUser', { id: socket.id });
         removeUser(socket.id);
 
     });
+
 })
 
 

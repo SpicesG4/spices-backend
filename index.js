@@ -63,33 +63,73 @@ io.on('connection', (socket) => {
 
     socket.on('adduser', (payload) => {
         console.log(payload, "soccccckkkeeeetttt");
+
+        //user ID ,, Socket ID
         addUser(payload._id, socket.id);
-        console.log(users);
+        console.log(users,"ussssers");
+
+        //all other online users
         io.emit("getUsers", users);
     })
 
 
-    socket.on('sendmassege', (payload) => {
-        console.log(payload, "mmmmm");
+    // socket.on('sendmassege', async (msgcontent) => {
+   
+          
+            
+    //             });
 
-        console.log(users, "useeeers only");
 
-        let data = 0;
-        users.map((user) => {
-            if (user.userId == payload.receiverId) {
-                data = user.socketId
-            }
 
-            return
-        })
-        console.log("daaata", data)
-        // socket.emit("getMessage", {"text" :payload.text});
+                socket.on('joinroon', (payload) => {
 
-        socket.to(data).emit("getMessage", { "text": payload.text, "senderId": payload.senderId });
+                    console.log("aeffd",payload)
+                        socket.join(payload.room);
+ let data=0;
+                        users.map((user) => {
+                            if (user.userId == payload.receiverId) {
+                                data = user.socketId
+                            }
+                
+                            return
+                        })
+                        console.log("hhhhh",payload.room)
+                        console.log("hhhhhyyy",data)
 
+                    socket.to(data).emit("plzjoin", payload.room);
+    
+                    console.log("sfg", payload.room)
+
+    
+    //almostjoined
+    socket.on('almostjoined', (room2) => {
+        socket.join(room2);
+
+
+        console.log(room2,"is it working")
+        socket.broadcast.to(room2).emit("getMessages",{test:"datasds"});
+    
+    })
+    
+    
+
+    
+    
+    
+    
+            // socket.emit("getMessages", { "text": payload.text, "senderId": payload.senderId });
+    
+    
+          
+
+    
 
     })
 
+
+
+    socket.emit('offlineUser', { id: socket.id });
+    removeUser(socket.id);
 
     socket.on('disconnect', () => {
         console.log(socket.id, 'disconnected');

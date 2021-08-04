@@ -3,7 +3,7 @@
 function acl(req, res, next) {
 
 
-    if (req.user.role === "chef") {
+    if (req.user.role === "chef" || req.user.role === "admin") {
         next()
     }
     else {

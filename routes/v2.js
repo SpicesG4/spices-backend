@@ -15,7 +15,8 @@ authRouter.put('/updatefood/:id', bearerAuth, acl, handleUpdateData);
 authRouter.delete('/deletefood/:id', bearerAuth, acl, handleDeleteData);
 // End of chef routes 
 
-
+// likes
+authRouter.put('/like/:id', bearerAuth, handleLikes);
 
 
 
@@ -26,9 +27,9 @@ authRouter.delete('/deletefood/:id', bearerAuth, acl, handleDeleteData);
 async function handleCreate(req, res, next) {
     //  const { email, name, imageUrl, movie, news, books, art, cats, food } = req.body;
 
-    const { description, date } = req.body
+    const { description, date, likes } = req.body
     console.log(req.user)
-    req.user.recipesArray.unshift({ description: description, date: date })
+    req.user.recipesArray.unshift({ description: description, date: date, likes: likes})
 
     await req.user.save();
 
@@ -96,5 +97,37 @@ async function handleDeleteData(req, res) {
 //
 
 
+//likes
 
+async function handleLikes(req, res, next) {
+
+    req.user.recipesArray.map((element) => {
+        if (element._id == req.params.id) {
+            element.likes = element.likes +1
+            return element
+        }
+    })
+    await req.user.save()
+    //   await  req.user.recipesArray.findByIdAndUpdate({_id:req.params.id},{ description: description, date: date })
+    res.send(req.user)
+}
+
+
+// authRouter.put('/like/:id',bearerAuth,(req,res)=>{
+
+//     req.user.recipesArray.findByIdAndUpdate(req.params.id,{
+//         $push:{likes:req.user._id}
+        
+//     },
+//     {
+//         new:true
+//     }).exec((err,result)=>{
+//         if(err){
+//             return res.status(422).json({error:err})
+//         }else{
+//             res.json(result)
+//             console.log(result)
+//         }
+//     })   
+// })
 module.exports = authRouter;

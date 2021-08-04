@@ -11,7 +11,7 @@ const recipes = new mongoose.Schema({
 
   description: { type: String, default: 'test1' },
   date: { type: String, default: 'test1' },
-
+  likes:{type: Number,default: 0},
 })
 
 

@@ -33,7 +33,6 @@ async function handleDeleteContent(req, res) {
        
         let data = await User.findById({ _id: req.params.id })
         let array = [];
-        // console.log('starttttt', data, 'deleeet')
         data.recipesArray.map((ele) => {
                 if (ele._id == req.params.ricepId) {
                         console.log("no need")

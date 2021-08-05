@@ -2,18 +2,11 @@
 
 function acl(req, res, next) {
 
-
     if (req.user.role === "chef" || req.user.role === "admin") {
         next()
-    }
-    else {
-
-        console.log(req.user)
-        console.log("else is done ")
+    } else {
         res.status(401).send("unauthorized")
     }
-    // console.log(req.user)
-
 }
 
 module.exports = acl;

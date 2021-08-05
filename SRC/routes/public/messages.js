@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const Message = require("../DB/model/Message");
+const Message = require("../../DB/model/Message");
 
 //add
 
@@ -13,8 +13,6 @@ router.post("/messages", async (req, res) => {
     res.status(500).json(err);
   }
 });
-
-
 
 
 //get

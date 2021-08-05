@@ -1,5 +1,13 @@
 # spices-backend
 
+## group members 
+   * Baha'a Qasim. 
+   * Bara'ah Alomari. 
+   * Batool Ayyad. 
+   * Rula Qasem. 
+   * Sokiyna Jaber 
+
+
 ## Heroku Link:
 
 [spices backend](https://spice-g4.herokuapp.com/)

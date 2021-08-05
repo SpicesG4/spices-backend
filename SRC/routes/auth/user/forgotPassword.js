@@ -3,8 +3,6 @@ const User = require('../../../DB/model/user.schema');
 const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer');
 
-router.post("/forget", forget);
-router.put('/api/forget/:token', verify);
 
 
 const transporter = nodemailer.createTransport({
@@ -15,7 +13,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-forget = async (req, res) => {
+ forget = async (req, res) => {
   const { email } = req.body
 
   if (!email) {
@@ -75,6 +73,10 @@ verify = async (req, res) => {
   }
 }
 
+
+
+router.post("/forget", forget);
+router.put('/api/forget/:token', verify);
 
 
 

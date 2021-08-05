@@ -23,7 +23,7 @@ const transporter = nodemailer.createTransport({
     const username = await User.findOne({ email });
     const verificationToken = username.generateVerificationToken();
 
-    const url = `http://localhost:3001/api/forget/${verificationToken}`
+    const url = `https://spice-g4.herokuapp.com/api/forget/${verificationToken}`
     transporter.sendMail({
       to: email,
       subject: 'change your password',

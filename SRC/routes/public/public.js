@@ -17,12 +17,13 @@ async function handlegetAll(req, res) {
   console.log(users);
   let arr = [];
 
-
   if (id) {
     console.log("first", id);
     users.map((ele) => {
 
-      if (id == ele._id) { arr.push(ele.recipesArray); console.log(id); }
+      if (id == ele._id) {
+        arr.push(ele.recipesArray);
+      }
 
     })
   } else {
@@ -33,9 +34,7 @@ async function handlegetAll(req, res) {
 
     })
   }
-
   res.status(200).json(arr);
-
 }
 
 

@@ -40,15 +40,15 @@ async function handleUpdateData(req, res, next) {
 
 //Delete  Recipe
 async function handleDeleteData(req, res) {
- let results = []
- const data = req.user.recipesArray.map((element) => {
+    let results = []
+    const data = req.user.recipesArray.map((element) => {
 
-    if (element._id != req.params.id) {
-        results.push(element)
-        return element
-    }
+        if (element._id != req.params.id) {
+            results.push(element)
+            return element
+        }
 
-  })
+    })
     req.user.recipesArray = results
     await req.user.save()
     res.send(req.user)

@@ -1,9 +1,9 @@
-const User = require('../../../DB/model/user.schema');
 const express = require('express');
 const authRouter = express.Router();
-const bearerAuth = require('../../../middleware/bearer')
+const User = require('../../../DB/model/user.schema');
+const bearerAuth = require('../../../middleware/bearer');
+const aclAdmin = require('../../../middleware/acladmin');
 //Admin privilages
-const aclAdmin = require('../../../middleware/acladmin')
 
 //start of Admin routes
 authRouter.delete('/deleteUser/:username', bearerAuth, aclAdmin, handleDeleteUser)

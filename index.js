@@ -26,10 +26,9 @@ const chefRoutes = require('./SRC/routes/auth/chef/chefRoutes.js');
 const public = require('./SRC/routes/public/public.js');
 const messages = require('./SRC/routes/public/messages')
 const conversations = require('./SRC/routes/public/conversations');
-const admin=require('./SRC/routes/auth/admin/adminRoutes');
-const forgetPass=require('./SRC/routes/auth/user/forgotPassword');
-
-const usersRoutes=require('./SRC/routes/auth/user/userauth');
+const admin = require('./SRC/routes/auth/admin/adminRoutes');
+const forgetPass = require('./SRC/routes/auth/user/forgotPassword');
+const usersRoutes = require('./SRC/routes/auth/user/userauth');
 
 //Calling Routes
 app.use('/', authRoutes);
@@ -38,9 +37,9 @@ app.use('/', public)
 
 app.use('/', messages);
 app.use('/', conversations);
-app.use('/',admin);
-app.use('/',forgetPass);
-app.use('/',usersRoutes);
+app.use('/', admin);
+app.use('/', forgetPass);
+app.use('/', usersRoutes);
 
 
 let users = [];
@@ -56,34 +55,22 @@ const getUser = (userId) => {
     return users.find((user) => user.userId === userId);
 };
 io.on('connection', (socket) => {
-    console.log('client connected', socket.id);
 
     socket.on('adduser', (payload) => {
         addUser(payload._id, socket.id);
-  
         io.emit("getUsers", users);
     })
 
-
-    let reciverSocket=0;
+    let reciverSocket = 0;
     socket.on('reciveID', (id) => {
-        console.log("id",id)
-         reciverSocket = getUser(id)
-        console.log(reciverSocket)
+        reciverSocket = getUser(id)
     });
 
-
     socket.on('sendmassege', (payload) => {
-        console.log("recived",payload)
-        console.log("recivedsocket",reciverSocket.socketId)
 
-    queue.push({ "text": payload.text, "senderId": payload.senderId });
-
+        queue.push({ "text": payload.text, "senderId": payload.senderId });
         socket.to(reciverSocket.socketId).emit("getoneMessage", payload)
-
         socket.to(reciverSocket.socketId).emit("getallmessages", queue)
-
-
     });
     socket.on('disconnect', () => {
         socket.emit('offlineUser', { id: socket.id });

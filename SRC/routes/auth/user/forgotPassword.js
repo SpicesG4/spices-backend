@@ -1,8 +1,12 @@
 const router = require("express").Router();
 const User = require('../../../DB/model/user.schema');
 const jwt = require("jsonwebtoken");
-
 const nodemailer = require('nodemailer');
+
+router.post("/forget", forget);
+router.put('/api/forget/:token', verify);
+
+
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
@@ -12,16 +16,15 @@ const transporter = nodemailer.createTransport({
 });
 
 forget = async (req, res) => {
-  const { email } = req.body    
+  const { email } = req.body
 
   if (!email) {
     return res.status(422).send({ message: "Missing email." });
   } try {
 
     const username = await User.findOne({ email });
-  
-    const verificationToken = username.generateVerificationToken();    
-    console.log(username.token, verificationToken, 'tocken');
+    const verificationToken = username.generateVerificationToken();
+
     const url = `http://localhost:3001/api/forget/${verificationToken}`
     transporter.sendMail({
       to: email,
@@ -37,23 +40,25 @@ forget = async (req, res) => {
 
 verify = async (req, res) => {
   const { token } = req.params
-  console.log('t', token);
-  console.log(process.env.USER_VERIFICATION_TOKEN_SECRET);
+
   if (!token) {
     return res.status(422).send({
       message: "Missing Token"
     });
+
   }
+
   let payload = null
   try {
     payload = jwt.verify(
       token,
       process.env.USER_VERIFICATION_TOKEN_SECRET
     );
+
   } catch (err) {
     return res.status(500).send(err);
-  } try {
 
+  } try {
     const user = await User.findOne({ _id: payload.ID }).exec();
     if (!user) {
       return res.status(404).send({
@@ -70,8 +75,7 @@ verify = async (req, res) => {
   }
 }
 
-router.post("/forget", forget);
-router.put('/api/forget/:token', verify);
+
 
 
 module.exports = router;

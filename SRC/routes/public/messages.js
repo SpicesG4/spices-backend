@@ -15,8 +15,6 @@ router.post("/messages", async (req, res) => {
 });
 
 
-
-
 //get
 
 router.get("/messages/:conversationId", async (req, res) => {

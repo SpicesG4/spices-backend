@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const User = require("../DB/model/user.schema");
+const User = require('../../../DB/model/user.schema');
 const jwt = require("jsonwebtoken");
 
 const nodemailer = require('nodemailer');
@@ -33,6 +33,7 @@ forget = async (req, res) => {
     return res.status(500).send(err);
   }
 }
+
 
 verify = async (req, res) => {
   const { token } = req.params

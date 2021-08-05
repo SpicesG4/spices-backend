@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const Message = require("../DB/model/Message");
+const Message = require("../../DB/model/Message");
 
 //add
 

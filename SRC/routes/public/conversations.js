@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const Conversation = require("../DB/model/Conversation");
+const Conversation = require("../../DB/model/Conversation");
 
 //new conv
 //Establish a conversation 
@@ -26,7 +26,7 @@ router.get("/conversations/:userId", async (req, res) => {
   //Return all conversation for this user
   try {
     const conversation = await Conversation.find({
-      members: { $in: [req.params.userId] },
+      members: { $in: [req.params.userId] },  
     });
     res.status(200).json(conversation);
   } catch (err) {

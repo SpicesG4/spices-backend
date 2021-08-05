@@ -1,5 +1,5 @@
 const express = require('express')
-require('./DB/mangoose')
+require('./SRC/DB/mangoose')
 require('dotenv').config()
 const cors = require('cors');
 const morgan = require('morgan');
@@ -19,25 +19,28 @@ const io = socketIo(server, {
 app.use(morgan('dev'));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+
 //Routes
-const v1Routes = require('./routes/v1.js');
-const v2Routes = require('./routes/v2.js');
-const public = require('./routes/public.js');
-const messages = require('./routes/messages')
-const conversations = require('./routes/conversations');
-const admin=require('./routes/admin-route');
-const forgetPass=require('./routes/forgitPassword');
+const authRoutes = require('./SRC/routes/auth/authRoutes.js');
+const chefRoutes = require('./SRC/routes/auth/chef/chefRoutes.js');
+const public = require('./SRC/routes/public/public.js');
+const messages = require('./SRC/routes/public/messages')
+const conversations = require('./SRC/routes/public/conversations');
+const admin=require('./SRC/routes/auth/admin/adminRoutes');
+const forgetPass=require('./SRC/routes/auth/user/forgotPassword');
 
-//Example
-app.use('/', v1Routes);
+const usersRoutes=require('./SRC/routes/auth/user/userauth');
 
-app.use('/', v2Routes);
+//Calling Routes
+app.use('/', authRoutes);
+app.use('/', chefRoutes);
 app.use('/', public)
 
 app.use('/', messages);
 app.use('/', conversations);
 app.use('/',admin);
 app.use('/',forgetPass);
+app.use('/',usersRoutes);
 
 
 let users = [];
@@ -54,20 +57,16 @@ const getUser = (userId) => {
 };
 io.on('connection', (socket) => {
     console.log('client connected', socket.id);
-    // socket.onAny((event, ...args) => {
-    //     //console.log(event, args);
-    // });
+
     socket.on('adduser', (payload) => {
-        //console.log(payload, "soccccckkkeeeetttt");
         addUser(payload._id, socket.id);
-        //console.log(users);
+  
         io.emit("getUsers", users);
     })
 
 
     let reciverSocket=0;
     socket.on('reciveID', (id) => {
-        //console.log(socket.id, 'disconnected');
         console.log("id",id)
          reciverSocket = getUser(id)
         console.log(reciverSocket)
@@ -75,7 +74,6 @@ io.on('connection', (socket) => {
 
 
     socket.on('sendmassege', (payload) => {
-        //console.log(socket.id, 'disconnected');
         console.log("recived",payload)
         console.log("recivedsocket",reciverSocket.socketId)
 
@@ -87,53 +85,7 @@ io.on('connection', (socket) => {
 
 
     });
-
-
- 
-
-
-    // socket.on('sendmassege', (payload) => {
-    //     //console.log(payload, "mmmmm");
-    //     //console.log(users, "useeeers only");
-    //     let data = 0;
-    //     users.map((user) => {
-    //         if (user.userId == payload.receiverId) {
-    //             data = user.socketId
-    //         }
-    //         return
-    //     })
-    //     let rdata = 0
-    //     users.map((user) => {
-    //         if (user.userId == payload.senderId) {
-    //             rdata = user.socketId
-    //         }
-    //         return
-    //     })
-    //     //console.log("daaata", data)
-    //     // socket.emit("getMessage", {"text" :payload.text});
-    //     async () => {
-    //         const sendemmm = {
-    //             conversationId: payload.conversationId,
-    //             sender: payload.senderId,
-    //             text: payload.text
-    //         }
-    //         const savedmessage = await axios.post('http://localhost:3001/messages', sendemmm)
-    //         //console.log("saved Msg", savedmessage.data)
-    //         socket.to(data).emit("getoneMessage", {
-    //             "text": payload.text, "senderId": payload.senderId
-    //         });
-    //         socket.to(rdata).emit("getoneMessagerecev", {
-    //             "text": payload.text, "senderId": payload.receiverId
-    //         });
-    //         //console.log("hihiuhihoh", payload.receiverId, payload.text)
-    //     }
-    //     queue.push({ "text": payload.text, "senderId": payload.senderId });
-    //     //console.log([...queue]);
-    //     socket.emit("getallmessages", [...queue]
-    //     )
-    // })
     socket.on('disconnect', () => {
-        //console.log(socket.id, 'disconnected');
         socket.emit('offlineUser', { id: socket.id });
         removeUser(socket.id);
     });

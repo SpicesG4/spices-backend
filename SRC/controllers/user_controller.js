@@ -31,7 +31,7 @@ exports.signup = async (req, res) => {
     };
 
     const verificationToken = username.generateVerificationToken();
-    const url = `http://localhost:3001/api/verify/${verificationToken}`;
+    const url = `https://spice-g4.herokuapp.com/api/verify/${verificationToken}`;
 
     transporter.sendMail({
       to: email,

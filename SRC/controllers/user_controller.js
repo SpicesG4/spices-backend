@@ -17,8 +17,13 @@ exports.signup = async (req, res) => {
   if (!email) {
     return res.status(422).send({ message: "Missing email." });
   } try {
+    console.log('1');
     const existingUser = await User.findOne({ email }).exec();
+    
     if (existingUser) {
+      console.log('token',existingUser.token)
+      
+    console.log('2');
       return res.status(409).send({
         message: "Email is already in use."
       });

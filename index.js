@@ -57,6 +57,7 @@ const getUser = (userId) => {
 io.on('connection', (socket) => {
 
     socket.on('adduser', (payload) => {
+        console.log('User Added');
         addUser(payload._id, socket.id);
         io.emit("getUsers", users);
     })

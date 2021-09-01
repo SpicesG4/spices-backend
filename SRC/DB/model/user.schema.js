@@ -5,71 +5,24 @@ const jwt = require("jsonwebtoken");
 const base64 = require('base-64');
 require('dotenv').config();
 
-
+const recipes = new mongoose.Schema({
+  description: { type: String, default: 'test1' },
+  date: { type: String, default: 'test1' },
+})
 
 const users = new mongoose.Schema({
-  username: {
-    type: String,
-    require: true,
-    min: 3,
-    max: 20,
-    unique: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    max: 50,
-    unique: true,
-  },
+  email: String,
   verified: {
     type: Boolean,
     required: true,
     default: false
   },
-  password: {
-    type: String,
-    required: true,
-    min: 6,
-  },
-  profilePicture: {
-    type: String,
-    default: "",
-  },
-  coverPicture: {
-    type: String,
-    default: "",
-  },
-  followers: {
-    type: Array,
-    default: [],
-  },
-  followings: {
-    type: Array,
-    default: [],
-  },
-  favorite: {
-    type: Array,
-    default: [],
-  },
-  role: {
-    type: String,
-    enum: ['user', 'chef', 'admin'],
-  },
-  desc: {
-    type: String,
-    max: 50,
-  },
-  city: {
-    type: String,
-    max: 50,
-  },
-},
-  { timestamps: true }
+  username: { type: String, unique: true },
+  password: { type: String },
+  role: { type: String, enum: ['user', 'chef', 'admin'] },
+  recipesArray: [recipes]
 
-);
-
-
-
+});
 
 // Adds a virtual field to the schema. We can see it, but it never persists
 // So, on every user object ... this.token is now readable!
@@ -94,10 +47,9 @@ users.methods.generateVerificationToken = function () {
 };
 
 // BASIC AUTH
-users.statics.authenticateBasic = async function (email, password) {
+users.statics.authenticateBasic = async function (username, password) {
 
-  const user = await this.findOne({ email })
-  console.log(email,user)
+  const user = await this.findOne({ username })
   const valid = await bcrypt.compare(password, user.password)
   if (valid) { return user; }
   throw new Error('Invalid User');

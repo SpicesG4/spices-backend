@@ -14,6 +14,11 @@ const v1Routes = require('./routes/v1.js');
 app.use('/', v1Routes);
 
 
+    socket.on('adduser', (payload) => {
+        console.log('User Added');
+        addUser(payload._id, socket.id);
+        io.emit("getUsers", users);
+    })
 
 
 

@@ -60,12 +60,9 @@ exports.logout = (req, res) => {
 
 
 exports.login = async (req, res) => {
-  const { email } = req.body    // Check we have an email
-  if (!email) {
-    return res.status(422).send({
-      message: "Missing email."
-    });
-  } try {
+  const email = req.user.email;
+console.log(req.user)
+  try {
     const user = await User.findOne({ email }).exec();
     if (!user) {
       return res.status(404).send({
@@ -76,7 +73,9 @@ exports.login = async (req, res) => {
       return res.status(403).send({
         message: "Verify your Account."
       });
-    } return res.status(200).send(user);
+    }
+    console.log(user.token)
+     return res.status(200).send(user);
   } catch (err) {
     return res.status(500).send(err);
   }

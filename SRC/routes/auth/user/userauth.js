@@ -4,8 +4,9 @@ const express = require('express');
 const authRouter = express.Router();
 const User = require('../../../DB/model/user.schema');
 const bearerAuth = require('../../../middleware/bearer')
+const Recipe = require('../../../DB/model/recipes.schema')
 
-authRouter.post('/addtofav', bearerAuth, handleaddfav);
+authRouter.post('/addtofav/:id', bearerAuth, handleaddfav);
 
 //Return All users
 authRouter.get('/listusers', bearerAuth, async (req, res, next) => {
@@ -20,20 +21,28 @@ authRouter.get('/list-chef', bearerAuth, async (req, res, next) => {
   res.status(200).json(chefUsers);
 });
 
+
+
+
 async function handleaddfav(req, res) {
-  const { userId, postId } = req.body
-  const users = await User.find({});
-  let arr = [];
-  users.map((ele) => {
-    if (userId == ele._id) {
-      ele.recipesArray.map((ele1) => {
-        if (postId == ele1._id) { arr.push(ele1) }
-      })
+  
+    try {
+      const recipe = await Recipe.findById(req.params.id);
+      const currentUser = await User.findById(req.body.userId);
+      console.log(recipe._id)
+      console.log(!currentUser.favorite.includes(recipe))
+  
+      if (!currentUser.favorite.includes(recipe._id)) {
+        await currentUser.updateOne({ $push: { favorite: recipe._id } });
+    console.log(currentUser)
+        res.status(200).json("user has been added this recipy ");
+      } else {
+        res.status(403).json("you allready added this recipy");
+      }
+    } catch (err) {
+      res.status(500).json(err);
     }
-  })
-  req.user.recipesArray = arr
-  await req.user.save();
-  res.status(201).json(arr);
+  
 }
 
 module.exports = authRouter;

@@ -38,7 +38,7 @@ async function handlegetRecipe(req, res) {
 }
 
 //get the user posts (profile page) 
-router.get("/profile/:username", async(req,res)=>{
+publicRoute.get("/profile/:username", async(req,res)=>{
     
   try{
       const user=await User.findOne({username:req.params.username})

@@ -76,7 +76,7 @@ const users = new mongoose.Schema({
 
 users.virtual('token').get(function () {
   let tokenObject = {
-    username: this.username,
+    username: this,
   }
   return jwt.sign(tokenObject, base64.encode(process.env.SECRET))
 });
@@ -108,8 +108,9 @@ users.statics.authenticateBasic = async function (email, password) {
 users.statics.authenticateWithToken = async function (token) {
   try {
     const parsedToken = jwt.verify(token, base64.encode(process.env.SECRET));
-    const user222 = await this.findOne({ username: parsedToken.username })
-console.log(user222)
+    console.log("parsed",parsedToken.username.username)
+    const user222 = await this.findOne({ username: parsedToken.username.username })
+console.log("User222",user222)
 
     if (user222) { return user222; }
     throw new Error("User Not Found");

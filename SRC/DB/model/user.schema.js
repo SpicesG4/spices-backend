@@ -99,6 +99,7 @@ users.statics.authenticateBasic = async function (email, password) {
   const user = await this.findOne({ email })
   console.log(email,user)
   const valid = await bcrypt.compare(password, user.password)
+  console.log(user,"Basic")
   if (valid) { return user; }
   throw new Error('Invalid User');
 }
@@ -107,8 +108,10 @@ users.statics.authenticateBasic = async function (email, password) {
 users.statics.authenticateWithToken = async function (token) {
   try {
     const parsedToken = jwt.verify(token, base64.encode(process.env.SECRET));
-    const user = this.findOne({ username: parsedToken.username })
-    if (user) { return user; }
+    const user222 = await this.findOne({ username: parsedToken.username })
+console.log(user222)
+
+    if (user222) { return user222; }
     throw new Error("User Not Found");
   } catch (e) {
     throw new Error(e.message)

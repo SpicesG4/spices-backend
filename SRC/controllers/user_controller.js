@@ -19,7 +19,7 @@ exports.signup = async (req, res) => {
   } try {
     console.log('1');
     const existingUser = await User.findOne({ email }).exec();
-    
+    console.log(existingUser)
     if (existingUser) {
       console.log('token',existingUser.token)
       

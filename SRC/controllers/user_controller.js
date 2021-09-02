@@ -75,7 +75,8 @@ console.log(req.user)
       });
     }
     console.log(user.token)
-     return res.status(200).send(user);
+    console.log(({user,"token":user.token}))
+     return res.status(200).send({user,"token":user.token});
   } catch (err) {
     return res.status(500).send(err);
   }

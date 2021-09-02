@@ -6,7 +6,7 @@ const Recipe = require('../../DB/model/recipes.schema');
 const bearerAuth = require('../../middleware/bearer');
 
 //Start of chef routes
-publicRoute.get('/getallfood',bearerAuth, handlegetAll);
+publicRoute.get('/getallfood/:userId',bearerAuth, handlegetAll);
 publicRoute.get('/getfood/:id',bearerAuth, handlegetRecipe);
 
 // End of chef routes
@@ -15,7 +15,7 @@ publicRoute.get('/getfood/:id',bearerAuth, handlegetRecipe);
 
 async function handlegetAll(req, res) {
   try {
-    const currentUser = await User.findById(req.body.userId);
+    const currentUser = await User.findById(req.params.userId);
     const userRecipe = await Recipe.find({ userId: currentUser._id });
     const chefRecipe = await Promise.all(
       currentUser.followings.map((friendId) => {
@@ -37,6 +37,17 @@ async function handlegetRecipe(req, res) {
   }
 }
 
+//get the user posts (profile page) 
+router.get("/profile/:username", async(req,res)=>{
+    
+  try{
+      const user=await User.findOne({username:req.params.username})
+      const recipe= await Recipe.find({userId:user._id});
+      res.status(200).json(recipe);
+  }catch(err){
+      res.status(500).json(err)
+  }
+});
 
 
 

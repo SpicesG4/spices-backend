@@ -54,12 +54,14 @@ async function handleUpdateData(req, res) {
 
 
 async function handleDeleteData(req, res) {
+  console.log(req.body)
     try {
         const ricipe = await Ricipes.findById(req.params.id);
-        if (ricipe.userId === req.body.userId) {
+        if (ricipe.userId == req.body.userId) {
           await ricipe.deleteOne();
-          res.status(200).json("the recipe has been deleted");
+          res.status(200).json(ricipe);
         } else {
+          console.log(req.body)
           res.status(403).json("you can delete only your ricipe");
         }
       } catch (err) {

@@ -1,5 +1,7 @@
 const express = require('express')
 require('./SRC/DB/mangoose')
+const multer = require("multer");
+const path = require("path");
 require('dotenv').config()
 const cors = require('cors');
 const morgan = require('morgan');
@@ -19,6 +21,28 @@ const io = socketIo(server, {
 app.use(morgan('dev'));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+
+
+app.use("/images", express.static(path.join(__dirname, "public/images")));
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "public/images");
+    },
+    filename: (req, file, cb) => {
+        cb(null, req.body.name);
+    },
+});
+
+const upload = multer({ storage: storage });
+app.post("/upload", upload.single("file"), (req, res) => {
+  try {
+    return res.status(200).json("File uploded successfully");
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 
 //Routes
 const authRoutes = require('./SRC/routes/auth/authRoutes.js');

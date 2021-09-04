@@ -12,7 +12,7 @@ authRouter.post('/addtofav/:id', bearerAuth, handleaddfav);
 authRouter.get('/listusers', bearerAuth, async (req, res, next) => {
   const users = await User.find({});
   const list = users.map(user => user.username);
-  res.status(200).json(list);
+  res.status(200).json(users);
 });
 
 

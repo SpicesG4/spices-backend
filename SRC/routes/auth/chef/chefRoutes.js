@@ -100,7 +100,7 @@ async function handleFollow(req, res) {
       if (!user.followers.includes(req.body.userId)) {
         await user.updateOne({ $push: { followers: req.body.userId } });
         await currentUser.updateOne({ $push: { followings: req.params.id } });
-        res.status(200).json("chef has been followed");
+        res.status(200).json(currentUser);
       } else {
         res.status(403).json("you allready follow this chef");
       }
@@ -125,7 +125,7 @@ async function handleUnfollow(req, res) {
       if (user.followers.includes(req.body.userId)) {
         await user.updateOne({ $pull: { followers: req.body.userId } });
         await currentUser.updateOne({ $pull: { followings: req.params.id } });
-        res.status(200).json("user has been unfollowed");
+        res.status(200).json(currentUser);
       } else {
         res.status(403).json("you dont follow this user");
       }
@@ -133,7 +133,7 @@ async function handleUnfollow(req, res) {
       res.status(500).json(err);
     }
   } else {
-    res.status(403).json("you cant unfollow yourself");
+    res.status(500).json("you cant unfollow yourself");
   }
   
 }

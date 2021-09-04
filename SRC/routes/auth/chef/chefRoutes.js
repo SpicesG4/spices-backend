@@ -14,7 +14,7 @@ authRouter.delete('/deletefood/:id', bearerAuth, acl, handleDeleteData);
 authRouter.put('/like/:id', bearerAuth, handleLike);
 authRouter.put('/follow/:id', bearerAuth, handleFollow);
 authRouter.put('/unfollow/:id', bearerAuth, handleUnfollow);
-
+authRouter.get('/getFriends/:id', bearerAuth, handleUnGetFriends);
 
 // End of chef routes
 
@@ -100,7 +100,9 @@ async function handleFollow(req, res) {
       if (!user.followers.includes(req.body.userId)) {
         await user.updateOne({ $push: { followers: req.body.userId } });
         await currentUser.updateOne({ $push: { followings: req.params.id } });
-        res.status(200).json(currentUser);
+        res.status(200).json("chef has been followed");
+        
+        
       } else {
         res.status(403).json("you allready follow this chef");
       }
@@ -137,5 +139,25 @@ async function handleUnfollow(req, res) {
   }
   
 }
+
+async function handleUnGetFriends (req, res) {
+  try {
+    const user = await User.findById(req.params.id);
+    const friends = await Promise.all(
+      user.followings.map((friendId) => {
+        return User.findById(friendId);
+      })
+    );
+    let friendList = [];
+    friends.map((friend) => {
+      const { _id, username, profilePicture } = friend;
+      friendList.push({ _id, username, profilePicture });
+    });
+    res.status(200).json(friendList)
+  } catch (err) {
+    console.log(req.params)
+    res.status(500).json(err);
+  }
+};
 
 module.exports = authRouter;

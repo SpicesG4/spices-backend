@@ -4,11 +4,34 @@ const Conversation = require("../../DB/model/Conversation");
 //new conv
 //Establish a conversation 
 router.post("/conversations", async (req, res) => {
-  const newConversation = new Conversation({
-    members: [req.body.senderId, req.body.receiverId],
-  });
 
   try {
+
+
+  
+    const allConversation= await Conversation.find({})
+
+    let bool =false
+    allConversation.map((item)=>{
+       bool= item.members.includes(req.body.senderId) &&   item.members.includes(req.body.receiverId)
+    if(bool)
+    {
+      throw new Error;
+    }
+    })
+    
+    // return all conversations find ({})
+    
+    // map into thae variable ,,, item.member
+    
+    
+      const newConversation = new Conversation({
+        members: [req.body.senderId, req.body.receiverId]
+      });
+    
+
+
+
     const conversation = await Conversation.find({
       members: { $in: [req.body.userId] },
     });

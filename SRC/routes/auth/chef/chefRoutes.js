@@ -12,9 +12,9 @@ authRouter.post('/addfood', bearerAuth, acl, handleCreate);
 authRouter.put('/updatefood/:id', bearerAuth, acl, handleUpdateData);
 authRouter.delete('/deletefood/:id', bearerAuth, acl, handleDeleteData);
 authRouter.put('/like/:id', bearerAuth, handleLike);
-authRouter.put('/follow/:id', bearerAuth, handleFollow);
-authRouter.put('/unfollow/:id', bearerAuth, handleUnfollow);
-authRouter.get('/getFriends/:id', bearerAuth, handleUnGetFriends);
+authRouter.put('/follow/:id' , handleFollow);
+authRouter.put('/unfollow/:id', handleUnfollow);
+authRouter.get('/getFriends/:id', handleUnGetFriends);
 
 // End of chef routes
 
@@ -100,11 +100,11 @@ async function handleFollow(req, res) {
       if (!user.followers.includes(req.body.userId)) {
         await user.updateOne({ $push: { followers: req.body.userId } });
         await currentUser.updateOne({ $push: { followings: req.params.id } });
-        res.status(200).json("chef has been followed");
+        res.status(200).json(currentUser.followings);
         
         
       } else {
-        res.status(403).json("you allready follow this chef");
+        res.status(403).json(currentUser.followings);
       }
     } catch (err) {
       res.status(500).json(err);
@@ -127,9 +127,9 @@ async function handleUnfollow(req, res) {
       if (user.followers.includes(req.body.userId)) {
         await user.updateOne({ $pull: { followers: req.body.userId } });
         await currentUser.updateOne({ $pull: { followings: req.params.id } });
-        res.status(200).json(currentUser);
+        res.status(200).json(currentUser.followings);
       } else {
-        res.status(403).json("you dont follow this user");
+        res.status(403).json(currentUser.followings);
       }
     } catch (err) {
       res.status(500).json(err);
@@ -142,6 +142,8 @@ async function handleUnfollow(req, res) {
 
 async function handleUnGetFriends (req, res) {
   try {
+
+
     const user = await User.findById(req.params.id);
     const friends = await Promise.all(
       user.followings.map((friendId) => {

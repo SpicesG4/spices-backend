@@ -61,6 +61,23 @@ async function handleaddfav(req, res) {
   
 }
 
+//Update proffile picture/Cover Picture  
+authRouter.put('/updateUser/:id', async (req, res) => {
+  const id = req.params.id;
+  const {coverPicture,profilePicture} = req.body;
+  await User.find({ _id: id }, (error, data) => {
+    if (error) {
+      res.send(error);
+    }
+    else {
+      data[0].profilePicture = profilePicture;
+      data[0].coverPicture = coverPicture;
+      data[0].save();
+      res.send(data)
+    }
+  })
+});
+
 module.exports = authRouter;
 
 

@@ -21,10 +21,13 @@ authRouter.get("/users",async (req, res) => {
   const userId = req.query.userId;
   const username = req.query.username;
   try {
+    // console.log(1)
     const user = userId
-      ? await User.findById(userId)
-      : await User.findOne({ username: username });
+    ? await User.findById(userId)
+    : await User.findOne({ username: username });
+    // console.log(2)
     const { password, updatedAt, ...other } = user._doc;
+    // console.log(3)
     res.status(200).json(other);
   } catch (err) {
     res.status(500).json(err);
@@ -45,15 +48,15 @@ async function handleaddfav(req, res) {
     try {
       const recipe = await Recipe.findById(req.params.id);
       const currentUser = await User.findById(req.body.userId);
-      console.log(recipe._id)
-      console.log(!currentUser.favorite.includes(recipe))
+      // console.log(recipe._id)
+      // console.log(!currentUser.favorite.includes(recipe))
   
       if (!currentUser.favorite.includes(recipe._id)) {
         await currentUser.updateOne({ $push: { favorite: recipe._id } });
-    console.log(currentUser)
-        res.status(200).json("user has been added this recipy ");
+    // console.log(currentUser)
+        res.status(200).json(currentUser.favorite);
       } else {
-        res.status(403).json("you allready added this recipy");
+        res.status(403).json(currentUser.favorite);
       }
     } catch (err) {
       res.status(500).json(err);

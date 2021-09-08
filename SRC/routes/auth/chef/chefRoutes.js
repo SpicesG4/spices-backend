@@ -54,14 +54,14 @@ async function handleUpdateData(req, res) {
 
 
 async function handleDeleteData(req, res) {
-  console.log(req.body)
+  // console.log(req.body)
     try {
         const ricipe = await Ricipes.findById(req.params.id);
         if (ricipe.userId == req.body.userId) {
           await ricipe.deleteOne();
           res.status(200).json(ricipe);
         } else {
-          console.log(req.body)
+          // console.log(req.body)
           res.status(403).json("you can delete only your ricipe");
         }
       } catch (err) {
@@ -125,7 +125,7 @@ async function handleUnfollow(req, res) {
       const user = await User.findById(req.params.id);
       
       const currentUser = await User.findById(req.body.userId);
-      console.log(user,req.body.userId)
+      // console.log(user,req.body.userId)
       if (user.followers.includes(req.body.userId)) {
         await user.updateOne({ $pull: { followers: req.body.userId } });
         await currentUser.updateOne({ $pull: { followings: req.params.id } });
@@ -145,21 +145,23 @@ async function handleUnfollow(req, res) {
 async function handleUnGetFriends (req, res) {
   try {
 
-
+    // console.log(9)
     const user = await User.findById(req.params.id);
+    // console.log(8)
     const friends = await Promise.all(
       user.followings.map((friendId) => {
         return User.findById(friendId);
       })
-    );
+      );
+      // console.log(7)
     let friendList = [];
-    friends.map((friend) => {
+    friends.forEach((friend) => {
       const { _id, username, profilePicture } = friend;
       friendList.push({ _id, username, profilePicture });
     });
     res.status(200).json(friendList)
   } catch (err) {
-    console.log(req.params)
+    // console.log(req.params)
     res.status(500).json(err);
   }
 };

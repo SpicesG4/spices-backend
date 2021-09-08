@@ -17,13 +17,13 @@ exports.signup = async (req, res) => {
   if (!email) {
     return res.status(422).send({ message: "Missing email." });
   } try {
-    console.log('1');
+    // console.log('1');
     const existingUser = await User.findOne({ email }).exec();
-    console.log(existingUser)
+    // console.log(existingUser)
     if (existingUser) {
-      console.log('token',existingUser.token)
+      // console.log('token',existingUser.token)
       
-    console.log('2');
+    // console.log('2');
       return res.status(409).send({
         message: "Email is already in use."
       });
@@ -61,7 +61,7 @@ exports.logout = (req, res) => {
 
 exports.login = async (req, res) => {
   const email = req.user.email;
-console.log(req.user)
+// console.log(req.user)
   try {
     const user = await User.findOne({ email }).exec();
     if (!user) {
@@ -74,8 +74,8 @@ console.log(req.user)
         message: "Verify your Account."
       });
     }
-    console.log(user.token)
-    console.log(({user,"token":user.token}))
+    // console.log(user.token)
+    // console.log(({user,"token":user.token}))
      return res.status(200).send({user,"token":user.token});
   } catch (err) {
     return res.status(500).send(err);

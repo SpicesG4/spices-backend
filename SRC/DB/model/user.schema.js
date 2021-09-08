@@ -74,33 +74,9 @@ const users = new mongoose.Schema({
 // Adds a virtual field to the schema. We can see it, but it never persists
 // So, on every user object ... this.token is now readable!
 
-// {
-//   username:
-//   email:
-//   verified:
-//   password:
-//   followers:
-//   followings: 
-//   favorite: 
-//   role: 
-//   desc: 
-//   city: 
-// },
-
-
-// }
 users.virtual('token').get(function () {
   let tokenObject = {
-    username :{
-        username:this.username,
-        email:this.email,
-        verified:this.verified,
-        password:this.password,
-        followers:this.followers,
-        followings: this.followings,
-        favorite: this.favorite,
-        role: this.role,
-    }
+    username :this
   }
   return jwt.sign(tokenObject, base64.encode(process.env.SECRET))
 });
@@ -145,3 +121,4 @@ console.log("User222",user222)
 
 
 module.exports = mongoose.model('users', users);
+

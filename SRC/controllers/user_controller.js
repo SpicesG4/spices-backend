@@ -28,6 +28,8 @@ exports.signup = async (req, res) => {
         message: "Email is already in use."
       });
     }
+console.log(req.body)
+
     const username = await new User(req.body);
     username.save()
     const output = {

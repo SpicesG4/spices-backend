@@ -38,6 +38,22 @@ authRouter.get('/list-chef', bearerAuth, async (req, res, next) => {
 });
 
 
+//Update proffile picture/Cover Picture  
+authRouter.put('/updateUser/:id', async (req, res) => {
+  const id = req.params.id; 
+  const {coverPicture,profilePicture} = req.body;
+  await User.find({ _id: id }, (error, data) => {
+    if (error) {
+      res.send(error);
+    }
+    else {
+      data[0].profilePicture = profilePicture;
+      data[0].coverPicture = coverPicture;
+      data[0].save();
+      res.send(data)
+    }
+  })
+});
 
 
 async function handleaddfav(req, res) {
@@ -47,7 +63,6 @@ async function handleaddfav(req, res) {
       const currentUser = await User.findById(req.body.userId);
       console.log(recipe._id)
       console.log(!currentUser.favorite.includes(recipe))
-  
       if (!currentUser.favorite.includes(recipe._id)) {
         await currentUser.updateOne({ $push: { favorite: recipe._id } });
     console.log(currentUser)

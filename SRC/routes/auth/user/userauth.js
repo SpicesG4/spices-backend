@@ -14,17 +14,22 @@ authRouter.get('/listusers', bearerAuth, async (req, res, next) => {
   const list = users.map(user => user.username);
   res.status(200).json(users);
 });
+authRouter.get('/users2', async (req, res, next) => {
+  const users = await User.find({});
+  const list = users.map(user => { return { _id: user._id, username: user.username, profilePicture: user.profilePicture } });
+  res.status(200).json(list);
+});
 
 
 //get a user
-authRouter.get("/users",async (req, res) => {
+authRouter.get("/users", async (req, res) => {
   const userId = req.query.userId;
   const username = req.query.username;
   try {
     // console.log(1)
     const user = userId
-    ? await User.findById(userId)
-    : await User.findOne({ username: username });
+      ? await User.findById(userId)
+      : await User.findOne({ username: username });
     // console.log(2)
     const { password, updatedAt, ...other } = user._doc;
     // console.log(3)
@@ -44,30 +49,30 @@ authRouter.get('/list-chef', bearerAuth, async (req, res, next) => {
 
 
 async function handleaddfav(req, res) {
-  
-    try {
-      const recipe = await Recipe.findById(req.params.id);
-      const currentUser = await User.findById(req.body.userId);
-      // console.log(recipe._id)
-      // console.log(!currentUser.favorite.includes(recipe))
-  
-      if (!currentUser.favorite.includes(recipe._id)) {
-        await currentUser.updateOne({ $push: { favorite: recipe._id } });
-    // console.log(currentUser)
-        res.status(200).json(currentUser.favorite);
-      } else {
-        res.status(403).json(currentUser.favorite);
-      }
-    } catch (err) {
-      res.status(500).json(err);
+
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+    const currentUser = await User.findById(req.body.userId);
+    // console.log(recipe._id)
+    // console.log(!currentUser.favorite.includes(recipe))
+
+    if (!currentUser.favorite.includes(recipe._id)) {
+      await currentUser.updateOne({ $push: { favorite: recipe._id } });
+      // console.log(currentUser)
+      res.status(200).json(currentUser.favorite);
+    } else {
+      res.status(403).json(currentUser.favorite);
     }
-  
+  } catch (err) {
+    res.status(500).json(err);
+  }
+
 }
 
 //Update proffile picture/Cover Picture  
 authRouter.put('/updateUser/:id', async (req, res) => {
   const id = req.params.id;
-  const {coverPicture,profilePicture} = req.body;
+  const { coverPicture, profilePicture } = req.body;
   await User.find({ _id: id }, (error, data) => {
     if (error) {
       res.send(error);

@@ -15,8 +15,20 @@ publicRoute.get('/getfood/:id', handlegetRecipe);
 
 async function handlegetAll(req, res) {
   try {
-    const currentUser = await User.findById(req.params.userId);
-    const userRecipe = await Recipe.find({ userId: currentUser._id });
+    let currentUser = await User.findById(req.params.userId);
+    let userRecipe = await Recipe.find({ userId: currentUser._id });
+
+    userRecipe = userRecipe.map(r => {
+      let x = JSON.stringify(r)
+      x = JSON.parse(x)
+      x.profilePicture = currentUser.profilePicture
+      x.username = currentUser.username
+      x.followings = currentUser.followings
+      x.followers = currentUser.followers
+      x.coverPicture = currentUser.coverPicture
+      return x
+    })
+
 
     let chefRecipe = await Promise.all(
       currentUser.followings.map((friendId) => {
@@ -24,33 +36,35 @@ async function handlegetAll(req, res) {
       })
     );
     const test = []
-    res.json(chefRecipe)
     await Promise.all(chefRecipe.map(async (recipe) => {
-      if(recipe.length==0)return{}
+      if (recipe.length == 0) return {}
 
       const user = await User.findById(recipe[0].userId)
       // console.log(111,user)
+      if (user) {
 
         recipe.forEach(r => {
-          // console.log(user.profilePicture)
-          let x=JSON.stringify(r)
-          x=JSON.parse(x)
+          // console.log(user)
+          let x = JSON.stringify(r)
+          x = JSON.parse(x)
 
-          x.profilePicture=user.profilePicture
-          x.username=user.username
-          x.followings=user.followings
-          x.followers=user.followers
-          x.coverPicture=user.coverPicture
+          x.profilePicture = user.profilePicture
+          x.username = user.username
+          x.followings = user.followings
+          x.followers = user.followers
+          x.coverPicture = user.coverPicture
           test.push(x)
         })
+      }
+
       // if (x) {
       // }
     }));
-    console.log('???end',test.length)
-    res.json(test)
+    res.json(userRecipe.concat(...test))
+
   } catch (err) {
-    console.log(err.message)
-    res.status(500).json(err);
+    // console.log(err.message)
+    // res.status(500).json(err);
   }
 }
 
